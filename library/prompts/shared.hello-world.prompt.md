@@ -1,5 +1,6 @@
 ---
 description: An example of a custom prompt for generating Python code.
+tools: ['search']
 ---
 
 # Execution Outline
