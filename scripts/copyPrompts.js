@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const PACKAGE_NAME = '@evg/prompt_library';
 const SOURCE_DIR = path.join(__dirname, '..', 'prompts');
 const ROOT_DIR = process.env.INIT_CWD || process.cwd();
 const DEST_DIR = path.join(ROOT_DIR, '.github', 'prompts');
@@ -10,27 +9,19 @@ function log(...args) {
   console.log('[prompt_library]', ...args);
 }
 
-function shouldCopyPrompts() {
-  const packageJsonPath = path.join(ROOT_DIR, 'package.json');
-  if (!fs.existsSync(packageJsonPath)) {
-    log('Skipping prompt copy (no package.json in root).');
-    return false;
-  }
-
+async function filesDiffer(srcPath, destPath) {
   try {
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-    if (
-      packageJson.devDependencies &&
-      Object.prototype.hasOwnProperty.call(packageJson.devDependencies, PACKAGE_NAME)
-    ) {
-      return true;
-    }
-  } catch (err) {
-    log('Unable to read root package.json:', err.message);
+    await fs.promises.access(destPath);
+  } catch {
+    return true;
   }
 
-  log('Skipping prompt copy (not installed as devDependency).');
-  return false;
+  const [srcContent, destContent] = await Promise.all([
+    fs.promises.readFile(srcPath),
+    fs.promises.readFile(destPath)
+  ]);
+
+  return !srcContent.equals(destContent);
 }
 
 async function copyDirectory(src, dest) {
@@ -38,7 +29,7 @@ async function copyDirectory(src, dest) {
   const entries = await fs.promises.readdir(src, { withFileTypes: true });
 
   await Promise.all(
-    entries.map((entry) => {
+    entries.map(async (entry) => {
       const srcPath = path.join(src, entry.name);
       const destPath = path.join(dest, entry.name);
 
@@ -46,16 +37,16 @@ async function copyDirectory(src, dest) {
         return copyDirectory(srcPath, destPath);
       }
 
-      return fs.promises.copyFile(srcPath, destPath);
+      if (await filesDiffer(srcPath, destPath)) {
+        return fs.promises.copyFile(srcPath, destPath);
+      }
+
+      return null;
     })
   );
 }
 
 async function main() {
-  if (!shouldCopyPrompts()) {
-    return;
-  }
-
   if (!fs.existsSync(SOURCE_DIR)) {
     log('Source prompts folder not found at', SOURCE_DIR);
     return;
