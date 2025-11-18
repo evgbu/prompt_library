@@ -4,4 +4,3 @@ tools: ['search']
 ---
 
 IMPORTANT: load and execute instructions from `node_modules/@evg/prompt_library/library/agents/hello-world.agent.md`
-In case of any issues, provide debug information.
