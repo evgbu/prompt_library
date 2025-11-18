@@ -1,6 +1,6 @@
 {
   "name": "@evg/prompt_library",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Shared prompt library",
   "homepage": "https://github.com/evgbu/prompt_library#readme",
   "bugs": {
@@ -15,11 +15,12 @@
   "type": "commonjs",
   "main": "index.js",
   "files": [
-    "prompts",
-    "scripts"
+    "install.js",
+    "shared",
+    "library"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "node ./scripts/copyPrompts.js"
+    "postinstall": "node ./install.js"
   }
 }
