@@ -1,0 +1,25 @@
+{
+  "name": "@evg/prompt_library",
+  "version": "1.0.0",
+  "description": "Shared prompt library",
+  "homepage": "https://github.com/evgbu/prompt_library#readme",
+  "bugs": {
+    "url": "https://github.com/evgbu/prompt_library/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evgbu/prompt_library.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "files": [
+    "prompts",
+    "scripts"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "node ./scripts/copyPrompts.js"
+  }
+}
