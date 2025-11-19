@@ -18,7 +18,7 @@ const SETTINGS_ENTRIES = {
     'node_modules/@evg/prompt_library/library/agents': true
   }
 };
-const GITIGNORE_PATTERN = '.github/agents/shared.*.agent.md';
+const GITIGNORE_PATTERN = '.github/agents/lib.*.agent.md';
 
 function log(...args) {
   console.log('[prompt_library]', ...args);
