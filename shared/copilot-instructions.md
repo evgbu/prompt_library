@@ -2,6 +2,7 @@
 applyTo: "**"
 description: "General instructions for all projects. Load project specific instructions from `./project-conventions.md` if existing."
 ---
+
 ## Prompt library
 - When request assets from [prompt_library] use path `node_modules/@evg/prompt_library/library/`
 

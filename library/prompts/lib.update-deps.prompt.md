@@ -1,0 +1,3 @@
+---
+agent: lib.update-deps
+---
