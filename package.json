@@ -1,6 +1,6 @@
 {
   "name": "@evg/prompt_library",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Shared prompt library",
   "homepage": "https://github.com/evgbu/prompt_library#readme",
   "bugs": {
@@ -10,17 +10,17 @@
     "type": "git",
     "url": "git+https://github.com/evgbu/prompt_library.git"
   },
-  "license": "ISC",
-  "author": "",
+  "license": "MIT",
+  "author": "Evgeny Burmakov",
   "type": "commonjs",
-  "main": "index.js",
+  "main": "",
   "files": [
     "scripts",
     "shared",
     "library"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "node ./scripts/postinstall.js"
+    "postinstall": "node ./scripts/install.js",
+    "uninstall": "node ./scripts/uninstall.js"
   }
 }
