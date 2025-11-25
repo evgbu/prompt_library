@@ -1,6 +1,6 @@
 {
   "name": "@evg/prompt_library",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Shared prompt library",
   "homepage": "https://github.com/evgbu/prompt_library#readme",
   "bugs": {
@@ -14,7 +14,9 @@
   "author": "Evgeny Burmakov",
   "type": "commonjs",
   "main": "",
+  "bin": "cli.js",
   "files": [
+    "cli.js",
     "scripts",
     "shared",
     "library"
