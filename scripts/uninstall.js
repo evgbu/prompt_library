@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const SOURCE_DIR = path.join(__dirname, '..', 'library');
 const ROOT_DIR = process.env.INIT_CWD || process.cwd();
 const DEST_DIR = path.join(ROOT_DIR, '.github');
 const VSCODE_DIR = path.join(ROOT_DIR, '.vscode');
@@ -9,6 +10,7 @@ const SETTINGS_CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'setting
 const MCP_CONFIG_PATH = path.join(VSCODE_DIR, 'mcp.json');
 const MCP_CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'mcp.json'), 'utf8'));
 const INSTRUCTIONS_FILES = ['copilot-instructions.md', 'code-review-rules.md'];
+const LIBRARY_FOLDERS = ['agents', 'instructions', 'prompts', 'scripts'];
 
 
 function log(...args) {
@@ -22,6 +24,17 @@ async function removeFile(filePath) {
   } catch (err) {
     if (err.code !== 'ENOENT') {
       log('Failed to remove file:', filePath, err.message);
+    }
+  }
+}
+
+async function removeDir(dirPath) {
+  try {
+    await fs.promises.rm(dirPath, { recursive: true, force: true });
+    log('Removed directory:', dirPath);
+  } catch (err) {
+    if (err.code !== 'ENOENT') {
+      log('Failed to remove directory:', dirPath, err.message);
     }
   }
 }
@@ -122,12 +135,50 @@ async function removeInstructionFiles() {
   for (const file of INSTRUCTIONS_FILES) {
     await removeFile(path.join(DEST_DIR, file));
   }
+  await removeFile(path.join(DEST_DIR, 'instructions', 'prompt-library.instructions.md'));
+}
+
+async function cleanMatchingFiles(src, dest) {
+  if (!fs.existsSync(dest)) return;
+  const entries = await fs.promises.readdir(src, { withFileTypes: true });
+  for (const entry of entries) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+    if (entry.isDirectory()) {
+      await cleanMatchingFiles(srcPath, destPath);
+    } else {
+      await removeFile(destPath);
+    }
+  }
+  // Check if dest is empty and remove if so
+  try {
+    const remaining = await fs.promises.readdir(dest);
+    if (remaining.length === 0) {
+      await fs.promises.rmdir(dest);
+      log('Removed empty directory:', dest);
+    }
+  } catch (err) {
+    // Directory might not exist or other error, ignore
+  }
+}
+
+async function cleanLibraryFolders() {
+  for (const folder of LIBRARY_FOLDERS) {
+    const destFolder = path.join(DEST_DIR, folder);
+    const srcFolder = path.join(SOURCE_DIR, folder);
+    if (fs.existsSync(srcFolder)) {
+      await cleanMatchingFiles(srcFolder, destFolder);
+    }
+  }
 }
 
 async function main() {
   try {
     // Remove copied files
     await removeInstructionFiles();
+
+    // Remove copied folders
+    await cleanLibraryFolders();
 
     // Update settings
     await updateVscodeSettings();
