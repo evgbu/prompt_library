@@ -70,6 +70,11 @@ async function updateVscodeSettings() {
     }
   }
 
+  if (Object.keys(existing).length === 0) {
+    await removeFile(SETTINGS_PATH);
+    return;
+  }
+
   if (!changed) {
     log('VS Code settings already clean');
     return;
@@ -114,6 +119,11 @@ async function updateMcpConfig() {
         changed = true;
       }
     }
+  }
+
+  if (Object.keys(existing).length === 0) {
+    await removeFile(MCP_CONFIG_PATH);
+    return;
   }
 
   if (!changed) {
