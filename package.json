@@ -1,6 +1,6 @@
 {
   "name": "@evg/prompt_library",
-  "version": "1.0.13",
+  "version": "1.0.15",
   "description": "Shared prompt library",
   "homepage": "https://github.com/evgbu/prompt_library#readme",
   "bugs": {
@@ -16,13 +16,10 @@
   "main": "scripts/cli.js",
   "bin": "scripts/cli.js",
   "files": [
-    ".github/",
     "scripts/",
-    "shared/",
-    "library/",
-    "cli.js"
+    "library/"
   ],
   "scripts": {
-    "postinstall": "npx @evg/prompt_library install"
+    "postinstall": "node ./scripts/install.js"
   }
 }
