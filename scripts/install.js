@@ -6,7 +6,6 @@ const ROOT_DIR = process.env.INIT_CWD || process.cwd();
 const DEST_DIR = path.join(ROOT_DIR, '.github');
 const VSCODE_DIR = path.join(ROOT_DIR, '.vscode');
 const SETTINGS_PATH = path.join(VSCODE_DIR, 'settings.json');
-const GITIGNORE_PATH = path.join(ROOT_DIR, '.gitignore');
 const SETTINGS_ENTRIES = {
   'chat.promptFilesLocations': {
     'node_modules/@evg/prompt_library/library/prompts': true
@@ -18,7 +17,7 @@ const SETTINGS_ENTRIES = {
     'node_modules/@evg/prompt_library/library/agents': true
   }
 };
-const GITIGNORE_PATTERN = '.github/agents/lib.*.agent.md';
+const INSTRUCTIONS_FILES = ['copilot-instructions.md', 'code-review-rules.md'];
 
 function log(...args) {
   console.log('[prompt_library]', ...args);
@@ -37,28 +36,6 @@ async function filesDiffer(srcPath, destPath) {
   ]);
 
   return !srcContent.equals(destContent);
-}
-
-async function copyDirectory(src, dest) {
-  await fs.promises.mkdir(dest, { recursive: true });
-  const entries = await fs.promises.readdir(src, { withFileTypes: true });
-
-  await Promise.all(
-    entries.map(async (entry) => {
-      const srcPath = path.join(src, entry.name);
-      const destPath = path.join(dest, entry.name);
-
-      if (entry.isDirectory()) {
-        return copyDirectory(srcPath, destPath);
-      }
-
-      if (await filesDiffer(srcPath, destPath)) {
-        return fs.promises.copyFile(srcPath, destPath);
-      }
-
-      return null;
-    })
-  );
 }
 
 async function updateVscodeSettings() {
@@ -98,6 +75,16 @@ async function updateVscodeSettings() {
   }
 }
 
+async function copyInstructionsFiles() {
+  await fs.promises.mkdir(DEST_DIR, { recursive: true });
+  for (const file of INSTRUCTIONS_FILES) {
+    const srcPath = path.join(SOURCE_DIR, file);
+    const destPath = path.join(DEST_DIR, file);
+    if (await filesDiffer(srcPath, destPath)) {
+      await fs.promises.copyFile(srcPath, destPath);
+    }
+  }
+}
 
 async function main() {
   if (!fs.existsSync(SOURCE_DIR)) {
@@ -106,10 +93,10 @@ async function main() {
   }
 
   try {
-    await copyDirectory(SOURCE_DIR, DEST_DIR);
-    log('Prompts copied to', DEST_DIR);
-    await updateVscodeSettings();
+    await copyInstructionsFiles();
+    log('Instructions copied to', DEST_DIR);
 
+    await updateVscodeSettings();
   } catch (err) {
     log('Failed:', err.message);
   }

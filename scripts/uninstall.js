@@ -1,12 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const SOURCE_DIR = path.join(__dirname, '..', 'library');
 const ROOT_DIR = process.env.INIT_CWD || process.cwd();
 const DEST_DIR = path.join(ROOT_DIR, '.github');
 const VSCODE_DIR = path.join(ROOT_DIR, '.vscode');
 const SETTINGS_PATH = path.join(VSCODE_DIR, 'settings.json');
-const GITIGNORE_PATH = path.join(ROOT_DIR, '.gitignore');
 const SETTINGS_ENTRIES = {
   'chat.promptFilesLocations': {
     'node_modules/@evg/prompt_library/library/prompts': true
@@ -18,21 +16,11 @@ const SETTINGS_ENTRIES = {
     'node_modules/@evg/prompt_library/library/agents': true
   }
 };
-const GITIGNORE_PATTERN = '.github/agents/lib.*.agent.md';
+const INSTRUCTIONS_FILES = ['copilot-instructions.md', 'code-review-rules.md'];
+
 
 function log(...args) {
   console.log('[prompt_library]', ...args);
-}
-
-async function removeDirectory(dirPath) {
-  try {
-    await fs.promises.rm(dirPath, { recursive: true, force: true });
-    log('Removed directory:', dirPath);
-  } catch (err) {
-    if (err.code !== 'ENOENT') {
-      log('Failed to remove directory:', dirPath, err.message);
-    }
-  }
 }
 
 async function removeFile(filePath) {
@@ -92,11 +80,16 @@ async function updateVscodeSettings() {
   }
 }
 
+async function removeInstructionFiles() {
+  for (const file of INSTRUCTIONS_FILES) {
+    await removeFile(path.join(DEST_DIR, file));
+  }
+}
+
 async function main() {
   try {
-    // Remove copied directories and files
-    await removeDirectory(path.join(DEST_DIR, 'agents'));
-    await removeFile(path.join(DEST_DIR, 'copilot-instructions.md'));
+    // Remove copied files
+    await removeInstructionFiles();
 
     // Update settings
     await updateVscodeSettings();
