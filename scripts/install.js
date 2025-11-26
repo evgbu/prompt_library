@@ -6,17 +6,9 @@ const ROOT_DIR = process.env.INIT_CWD || process.cwd();
 const DEST_DIR = path.join(ROOT_DIR, '.github');
 const VSCODE_DIR = path.join(ROOT_DIR, '.vscode');
 const SETTINGS_PATH = path.join(VSCODE_DIR, 'settings.json');
-const SETTINGS_ENTRIES = {
-  'chat.promptFilesLocations': {
-    'node_modules/@evg/prompt_library/library/prompts': true
-  },
-  'chat.instructionsFilesLocations': {
-    'node_modules/@evg/prompt_library/library/instructions': true
-  },
-  'chat.modeFilesLocations': {
-    'node_modules/@evg/prompt_library/library/agents': true
-  }
-};
+const SETTINGS_CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'settings.json'), 'utf8'));
+const MCP_CONFIG_PATH = path.join(VSCODE_DIR, 'mcp.json');
+const MCP_CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'mcp.json'), 'utf8'));
 const INSTRUCTIONS_FILES = ['copilot-instructions.md', 'code-review-rules.md'];
 
 function log(...args) {
@@ -56,7 +48,7 @@ async function updateVscodeSettings() {
 
   const merged = { ...existing };
 
-  for (const [key, value] of Object.entries(SETTINGS_ENTRIES)) {
+  for (const [key, value] of Object.entries(SETTINGS_CONFIG)) {
     merged[key] = { ...(existing[key] || {}), ...value };
   }
 
@@ -72,6 +64,43 @@ async function updateVscodeSettings() {
     log('VS Code settings updated at', SETTINGS_PATH);
   } catch (err) {
     log('Failed to write VS Code settings:', err.message);
+  }
+}
+
+async function updateMcpConfig() {
+  await fs.promises.mkdir(VSCODE_DIR, { recursive: true });
+
+  let existingRaw = '';
+  let existing = {};
+
+  try {
+    existingRaw = await fs.promises.readFile(MCP_CONFIG_PATH, 'utf8');
+    existing = JSON.parse(existingRaw);
+  } catch (err) {
+    if (err.code && err.code !== 'ENOENT') {
+      log('Failed to read existing MCP config:', err.message);
+    }
+    existing = {};
+  }
+
+  const merged = { ...existing };
+
+  for (const [key, value] of Object.entries(MCP_CONFIG)) {
+    merged[key] = { ...(existing[key] || {}), ...value };
+  }
+
+  const newContent = JSON.stringify(merged, null, 2) + '\n';
+
+  if (existingRaw === newContent) {
+    log('MCP config already up to date');
+    return;
+  }
+
+  try {
+    await fs.promises.writeFile(MCP_CONFIG_PATH, newContent, 'utf8');
+    log('MCP config updated at', MCP_CONFIG_PATH);
+  } catch (err) {
+    log('Failed to write MCP config:', err.message);
   }
 }
 
@@ -97,6 +126,8 @@ async function main() {
     log('Instructions copied to', DEST_DIR);
 
     await updateVscodeSettings();
+
+    await updateMcpConfig();
   } catch (err) {
     log('Failed:', err.message);
   }

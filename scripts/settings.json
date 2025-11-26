@@ -1,0 +1,11 @@
+{
+  "chat.promptFilesLocations": {
+    "node_modules/@evg/prompt_library/library/prompts": true
+  },
+  "chat.instructionsFilesLocations": {
+    "node_modules/@evg/prompt_library/library/instructions": true
+  },
+  "chat.modeFilesLocations": {
+    "node_modules/@evg/prompt_library/library/agents": true
+  }
+}
