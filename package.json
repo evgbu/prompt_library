@@ -1,6 +1,6 @@
 {
   "name": "@evg/prompt_library",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Shared prompt library",
   "homepage": "https://github.com/evgbu/prompt_library#readme",
   "bugs": {
@@ -14,15 +14,13 @@
   "author": "Evgeny Burmakov",
   "type": "commonjs",
   "main": "",
-  "bin": "cli.js",
+  "bin": "dist/bin/cli.js",
   "files": [
-    "cli.js",
-    "scripts",
-    "shared",
-    "library"
+    "dist"
   ],
   "scripts": {
-    "postinstall": "node ./scripts/install.js",
-    "uninstall": "node ./scripts/uninstall.js"
+    "build": "node ./scripts/build.js",
+    "prepublishOnly": "npm run build",
+    "postinstall": "node ./lib/scripts/install.js"
   }
 }

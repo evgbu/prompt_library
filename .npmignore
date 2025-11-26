@@ -1,0 +1,10 @@
+# Source files (only ship dist/)
+cli.js
+scripts/
+shared/
+library/
+
+# Development files
+.git
+.gitignore
+node_modules
