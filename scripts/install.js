@@ -260,7 +260,7 @@ async function copyFolders() {
 async function copyPromptLibraryInstructions(instructionsFile) {
   const instructionsDir = path.join(DEST_DIR, 'instructions');
   await fs.promises.mkdir(instructionsDir, { recursive: true });
-  const srcPath = path.join(__dirname, '..', instructionsFile);
+  const srcPath = path.join(__dirname, instructionsFile);
   const destPath = path.join(instructionsDir, 'prompt-library.instructions.md');
   if (await filesDiffer(srcPath, destPath)) {
     await fs.promises.copyFile(srcPath, destPath);
