@@ -3,9 +3,6 @@ applyTo: "**"
 description: "General instructions for all projects."
 ---
 
-## Prompt library
-- When request assets from [prompt_library] use path `node_modules/@evg/prompt_library/library/`
-
 ## Project Instructions
 - If `.github/project-conventions.md` exists, follow those project-specific instructions in addition to these general instructions.
 
