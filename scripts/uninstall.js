@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const SOURCE_DIR = path.join(__dirname, '..', 'shared');
+const SOURCE_DIR = path.join(__dirname, '..', 'library');
 const ROOT_DIR = process.env.INIT_CWD || process.cwd();
 const DEST_DIR = path.join(ROOT_DIR, '.github');
 const VSCODE_DIR = path.join(ROOT_DIR, '.vscode');
@@ -14,7 +14,7 @@ const SETTINGS_ENTRIES = {
   'chat.instructionsFilesLocations': {
     'node_modules/@evg/prompt_library/library/instructions': true
   },
-  'chat.agentsFilesLocations': {
+  'chat.modeFilesLocations': {
     'node_modules/@evg/prompt_library/library/agents': true
   }
 };
@@ -92,36 +92,6 @@ async function updateVscodeSettings() {
   }
 }
 
-async function updateGitignore() {
-  let content = '';
-
-  try {
-    content = await fs.promises.readFile(GITIGNORE_PATH, 'utf8');
-  } catch (err) {
-    if (err.code !== 'ENOENT') {
-      log('Failed to read .gitignore:', err.message);
-    }
-    return; // If no .gitignore, nothing to remove
-  }
-
-  const lines = content.split('\n');
-  const filteredLines = lines.filter(line => line.trim() !== GITIGNORE_PATTERN);
-
-  if (filteredLines.length === lines.length) {
-    log('.gitignore does not contain', GITIGNORE_PATTERN);
-    return;
-  }
-
-  const newContent = filteredLines.join('\n') + '\n';
-
-  try {
-    await fs.promises.writeFile(GITIGNORE_PATH, newContent, 'utf8');
-    log('.gitignore updated, removed', GITIGNORE_PATTERN);
-  } catch (err) {
-    log('Failed to write .gitignore:', err.message);
-  }
-}
-
 async function main() {
   try {
     // Remove copied directories and files
@@ -131,8 +101,6 @@ async function main() {
     // Update settings
     await updateVscodeSettings();
 
-    // Update gitignore
-    await updateGitignore();
 
     log('Uninstall cleanup completed');
   } catch (err) {

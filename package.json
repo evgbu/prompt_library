@@ -13,14 +13,16 @@
   "license": "MIT",
   "author": "Evgeny Burmakov",
   "type": "commonjs",
-  "main": "",
-  "bin": "dist/bin/cli.js",
+  "main": "scripts/cli.js",
+  "bin": "scripts/cli.js",
   "files": [
-    "dist"
+    ".github/",
+    "scripts/",
+    "shared/",
+    "library/",
+    "cli.js"
   ],
   "scripts": {
-    "build": "node ./scripts/build.js",
-    "prepublishOnly": "npm run build",
-    "postinstall": "node ./lib/scripts/install.js"
+    "postinstall": "npx @evg/prompt_library install"
   }
 }

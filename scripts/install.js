@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const SOURCE_DIR = path.join(__dirname, '..', 'shared');
+const SOURCE_DIR = path.join(__dirname, '..', 'library');
 const ROOT_DIR = process.env.INIT_CWD || process.cwd();
 const DEST_DIR = path.join(ROOT_DIR, '.github');
 const VSCODE_DIR = path.join(ROOT_DIR, '.vscode');
@@ -14,7 +14,7 @@ const SETTINGS_ENTRIES = {
   'chat.instructionsFilesLocations': {
     'node_modules/@evg/prompt_library/library/instructions': true
   },
-  'chat.agentsFilesLocations': {
+  'chat.modeFilesLocations': {
     'node_modules/@evg/prompt_library/library/agents': true
   }
 };
@@ -98,35 +98,6 @@ async function updateVscodeSettings() {
   }
 }
 
-async function updateGitignore() {
-  
-  let content = '';
-
-  try {
-    content = await fs.promises.readFile(GITIGNORE_PATH, 'utf8');
-  } catch (err) {
-    if (err.code !== 'ENOENT') {
-      log('Failed to read .gitignore:', err.message);
-      return;
-    }
-    // File doesn't exist, will create with pattern
-  }
-
-  const lines = content.split('\n').map(line => line.trim());
-  if (lines.includes(GITIGNORE_PATTERN)) {
-    log('.gitignore already contains', GITIGNORE_PATTERN);
-    return;
-  }
-
-  const newContent = content ? content + '\n' + GITIGNORE_PATTERN + '\n' : GITIGNORE_PATTERN + '\n';
-
-  try {
-    await fs.promises.writeFile(GITIGNORE_PATH, newContent, 'utf8');
-    log('.gitignore updated with', GITIGNORE_PATTERN);
-  } catch (err) {
-    log('Failed to write .gitignore:', err.message);
-  }
-}
 
 async function main() {
   if (!fs.existsSync(SOURCE_DIR)) {
@@ -138,7 +109,7 @@ async function main() {
     await copyDirectory(SOURCE_DIR, DEST_DIR);
     log('Prompts copied to', DEST_DIR);
     await updateVscodeSettings();
-    await updateGitignore();
+
   } catch (err) {
     log('Failed:', err.message);
   }

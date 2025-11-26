@@ -1,0 +1,11 @@
+{
+  "chat.promptFilesLocations": {
+    "library/prompts": true
+  },
+  "chat.instructionsFilesLocations": {
+    "library/instructions": true
+  },
+  "chat.modeFilesLocations": {
+    "library/agents": true
+  }
+}

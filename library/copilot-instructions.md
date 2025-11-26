@@ -7,7 +7,10 @@ description: "General instructions for all projects."
 - When request assets from [prompt_library] use path `node_modules/@evg/prompt_library/library/`
 
 ## Project Instructions
-- IMPORTANT: Load project specific instructions if existing from `.github/project-conventions.md`. Use such rules over these general instructions.
+- If `.github/project-conventions.md` exists, follow those project-specific instructions in addition to these general instructions.
+
+## Code Review
+- Follow the rules defined in `.github/code-review-rules.md`
 
 ## Code Quality
 - All code style rules are defined in configuration files: `.eslintrc.json`, `.prettierrc.json`, `.editorconfig`
