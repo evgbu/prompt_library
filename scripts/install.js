@@ -9,7 +9,7 @@ const SETTINGS_PATH = path.join(VSCODE_DIR, 'settings.json');
 const SETTINGS_CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'assets', 'settings.json'), 'utf8'));
 const MCP_CONFIG_PATH = path.join(VSCODE_DIR, 'mcp.json');
 const MCP_CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'assets', 'mcp.json'), 'utf8'));
-const INSTRUCTIONS_FILES = ['copilot-instructions.md', 'code-review-rules.md'];
+const INSTRUCTIONS_FILES = ['copilot-instructions.md', 'cmn.code-review-rules.md'];
 const LIBRARY_FOLDERS = ['agents', 'instructions', 'prompts', 'scripts'];
 const PROMPT_LIBRARY_INSTRUCTIONS_FILE = 'cmn.library.instructions.md';
 
