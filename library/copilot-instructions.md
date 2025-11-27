@@ -7,7 +7,7 @@ description: "General instructions for all projects."
 - If `.github/project-conventions.md` exists, follow those project-specific instructions in addition to these general instructions.
 
 ## Code Review
-- Follow the rules defined in `.github/code-review-rules.md`
+- Follow the rules defined in `.github/cmn.code-review-rules.md`
 
 ## Code Quality
 - All code style rules are defined in configuration files: `.eslintrc.json`, `.prettierrc.json`, `.editorconfig`

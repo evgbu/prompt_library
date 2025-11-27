@@ -1,0 +1,3 @@
+---
+agent: cmn.update-deps
+---

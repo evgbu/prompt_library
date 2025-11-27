@@ -1,3 +1,0 @@
----
-agent: common.update-deps
----

@@ -1,9 +1,9 @@
 ---
-description: Extract code review rules from recent changes and update .github/code-review-rules.md
+description: Extract code review rules from recent changes and update .github/cmn.code-review-rules.md
 argument-hint: Reference to changes provided via local changes, commit hash, PR number, or discussion context
 tools: ['edit', 'search', 'changes', 'github/github-mcp-server/get_commit', 'github/github-mcp-server/get_file_contents', 'github/github-mcp-server/pull_request_read', 'github/github-mcp-server/search_pull_requests']
 ---
-Extract code review rules from recent changes/fixes and update the `.github/code-review-rules.md` file.
+Extract code review rules from recent changes/fixes and update the `.github/cmn.code-review-rules.md` file.
 
 Think step by step:
 0. Ensure that the user has provided the necessary context for the changes or basis for creating rules, such as recent changes, commit hashes, PR numbers, or discussion context. If not provided, request it before proceeding. The user input should be unambiguous and specific (E.g. if PR context is used, exact PR should be pointed out).
@@ -13,7 +13,7 @@ Think step by step:
    - The category of the issue (e.g., naming conventions, error handling, performance, security)
    - The specific rule or guideline that would have prevented it
    - A clear, actionable description of the rule
-4. Check if `.github/code-review-rules.md` exists:
+4. Check if `.github/cmn.code-review-rules.md` exists:
    - If it exists, read the current rules
    - If it doesn't exist, create it with appropriate structure
 5. Before adding new rules, evaluate:

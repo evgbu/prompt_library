@@ -6,11 +6,12 @@ const ROOT_DIR = process.env.INIT_CWD || process.cwd();
 const DEST_DIR = path.join(ROOT_DIR, '.github');
 const VSCODE_DIR = path.join(ROOT_DIR, '.vscode');
 const SETTINGS_PATH = path.join(VSCODE_DIR, 'settings.json');
-const SETTINGS_CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'settings.json'), 'utf8'));
+const SETTINGS_CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'assets', 'settings.json'), 'utf8'));
 const MCP_CONFIG_PATH = path.join(VSCODE_DIR, 'mcp.json');
-const MCP_CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'mcp.json'), 'utf8'));
+const MCP_CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'assets', 'mcp.json'), 'utf8'));
 const INSTRUCTIONS_FILES = ['copilot-instructions.md', 'code-review-rules.md'];
 const LIBRARY_FOLDERS = ['agents', 'instructions', 'prompts', 'scripts'];
+const PROMPT_LIBRARY_INSTRUCTIONS_FILE = 'cmn.library.instructions.md';
 
 const args = process.argv.slice(2);
 const mode = args.includes('--mode') && args[args.indexOf('--mode') + 1] === 'embedded' ? 'embedded' : 'reference';
@@ -173,57 +174,6 @@ async function cleanVscodeSettings() {
   }
 }
 
-async function cleanMcpConfig() {
-  let existing = {};
-
-  try {
-    const existingRaw = await fs.promises.readFile(MCP_CONFIG_PATH, 'utf8');
-    existing = JSON.parse(existingRaw);
-  } catch (err) {
-    if (err.code !== 'ENOENT') {
-      log('Failed to read MCP config:', err.message);
-    }
-    return; // If no config file, nothing to remove
-  }
-
-  let changed = false;
-
-  for (const [key, value] of Object.entries(MCP_CONFIG)) {
-    if (existing[key]) {
-      for (const [subKey, subValue] of Object.entries(value)) {
-        if (JSON.stringify(existing[key][subKey]) === JSON.stringify(subValue)) {
-          delete existing[key][subKey];
-          changed = true;
-        }
-      }
-      // If the object is empty, remove the key
-      if (Object.keys(existing[key]).length === 0) {
-        delete existing[key];
-        changed = true;
-      }
-    }
-  }
-
-  if (Object.keys(existing).length === 0) {
-    await removeFile(MCP_CONFIG_PATH);
-    return;
-  }
-
-  if (!changed) {
-    log('MCP config already clean');
-    return;
-  }
-
-  const newContent = JSON.stringify(existing, null, 2) + '\n';
-
-  try {
-    await fs.promises.writeFile(MCP_CONFIG_PATH, newContent, 'utf8');
-    log('MCP config cleaned at', MCP_CONFIG_PATH);
-  } catch (err) {
-    log('Failed to write MCP config:', err.message);
-  }
-}
-
 async function removeFile(filePath) {
   try {
     await fs.promises.unlink(filePath);
@@ -231,17 +181,6 @@ async function removeFile(filePath) {
   } catch (err) {
     if (err.code !== 'ENOENT') {
       log('Failed to remove file:', filePath, err.message);
-    }
-  }
-}
-
-async function removeDir(dirPath) {
-  try {
-    await fs.promises.rm(dirPath, { recursive: true, force: true });
-    log('Removed directory:', dirPath);
-  } catch (err) {
-    if (err.code !== 'ENOENT') {
-      log('Failed to remove directory:', dirPath, err.message);
     }
   }
 }
@@ -270,8 +209,8 @@ async function copyFolders() {
 async function copyPromptLibraryInstructions(instructionsFile) {
   const instructionsDir = path.join(DEST_DIR, 'instructions');
   await fs.promises.mkdir(instructionsDir, { recursive: true });
-  const srcPath = path.join(__dirname, instructionsFile);
-  const destPath = path.join(instructionsDir, 'prompt-library.instructions.md');
+  const srcPath = path.join(__dirname, 'assets', instructionsFile);
+  const destPath = path.join(instructionsDir, PROMPT_LIBRARY_INSTRUCTIONS_FILE);
   if (await filesDiffer(srcPath, destPath)) {
     await fs.promises.copyFile(srcPath, destPath);
   }
@@ -331,7 +270,7 @@ async function main() {
       
       await updateMcpConfig();
 
-      await copyPromptLibraryInstructions('prompt-library.instructions.embed.md');
+      await copyPromptLibraryInstructions('cmn.library.instructions.embed.md');
       log('Embedded instructions copied');
     } else {
       // Clean embedded mode artifacts
@@ -345,7 +284,7 @@ async function main() {
 
       await updateMcpConfig();
 
-      await copyPromptLibraryInstructions('prompt-library.instructions.reference.md');
+      await copyPromptLibraryInstructions('cmn.library.instructions.reference.md');
       log('Reference instructions copied');
     }
   } catch (err) {

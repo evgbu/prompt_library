@@ -6,12 +6,12 @@ const ROOT_DIR = process.env.INIT_CWD || process.cwd();
 const DEST_DIR = path.join(ROOT_DIR, '.github');
 const VSCODE_DIR = path.join(ROOT_DIR, '.vscode');
 const SETTINGS_PATH = path.join(VSCODE_DIR, 'settings.json');
-const SETTINGS_CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'settings.json'), 'utf8'));
+const SETTINGS_CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'assets', 'settings.json'), 'utf8'));
 const MCP_CONFIG_PATH = path.join(VSCODE_DIR, 'mcp.json');
-const MCP_CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'mcp.json'), 'utf8'));
+const MCP_CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'assets', 'mcp.json'), 'utf8'));
 const INSTRUCTIONS_FILES = ['copilot-instructions.md', 'code-review-rules.md'];
 const LIBRARY_FOLDERS = ['agents', 'instructions', 'prompts', 'scripts'];
-
+const PROMPT_LIBRARY_INSTRUCTIONS_FILE = 'cmn.library.instructions.md';
 
 function log(...args) {
   console.log('[prompt_library]', ...args);
@@ -24,17 +24,6 @@ async function removeFile(filePath) {
   } catch (err) {
     if (err.code !== 'ENOENT') {
       log('Failed to remove file:', filePath, err.message);
-    }
-  }
-}
-
-async function removeDir(dirPath) {
-  try {
-    await fs.promises.rm(dirPath, { recursive: true, force: true });
-    log('Removed directory:', dirPath);
-  } catch (err) {
-    if (err.code !== 'ENOENT') {
-      log('Failed to remove directory:', dirPath, err.message);
     }
   }
 }
@@ -145,7 +134,7 @@ async function removeInstructionFiles() {
   for (const file of INSTRUCTIONS_FILES) {
     await removeFile(path.join(DEST_DIR, file));
   }
-  await removeFile(path.join(DEST_DIR, 'instructions', 'prompt-library.instructions.md'));
+  await removeFile(path.join(DEST_DIR, 'instructions', PROMPT_LIBRARY_INSTRUCTIONS_FILE));
 }
 
 async function cleanMatchingFiles(src, dest) {
